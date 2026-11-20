@@ -1,19 +1,18 @@
-
-name: StudyFolio Android Build
+name: Build and Test StudyFolio
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
   build:
-    name: Build and Test StudyFolio
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: android # Change to '.' if gradlew is at the repo root
 
     steps:
       - name: Checkout Repository
@@ -23,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
       - name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -32,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew test
 
       - name: Build Android APK
         run: ./gradlew assembleDebug
@@ -40,6 +39,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: StudyFolio-APK
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          name: StudyFolio-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk # Adjust if your project folder differs
