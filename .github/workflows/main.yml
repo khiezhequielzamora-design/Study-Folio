@@ -14,23 +14,51 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Locate Android Project Directory
+        id: find-project
+        run: |
+          PROJECT_DIR=$(find . -maxdepth 3 \( -name "settings.gradle" -o -name "settings.gradle.kts" \) -printf "%h\n" | head -n 1)
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "No settings.gradle found. Listing repo files:"
+            find . -maxdepth 3 -not -path '*/.*'
+            exit 1
+          fi
+          echo "Found project directory: $PROJECT_DIR"
+          echo "dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
       - name: Set Up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      - name: Set Up Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run Unit Tests
-        run: gradle test
+        working-directory: ${{ steps.find-project.outputs.dir }}
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+            ./gradlew testDebugUnitTest --stacktrace
+          else
+            gradle testDebugUnitTest --stacktrace
+          fi
 
       - name: Build Android APK
-        run: gradle assembleDebug
+        working-directory: ${{ steps.find-project.outputs.dir }}
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: StudyFolio-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: ${{ steps.find-project.outputs.dir }}/**/build/outputs/apk/debug/*.apk
