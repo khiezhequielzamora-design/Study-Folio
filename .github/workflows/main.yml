@@ -1,170 +1,45 @@
 
-project:
-  name: StudyFolio AI
-  version: "2.0"
-  category: Education
-  platform: Android
-  purpose: >
-    An intelligent AI-powered learning platform
-    that helps students study, organize notes,
-    prepare for exams, and understand lessons.
+name: StudyFolio Android Build
 
-design:
-  theme: Dark Academic
-  primary: "#063B2D"
-  secondary: "#8DE5C2"
-  background: "#071B16"
-  surface: "#103C30"
-  text_primary: "#FFFFFF"
-  text_secondary: "#B7CEC4"
-  accent: "#4BD6A0"
-  font: "Inter"
-  border_radius: 20
-  layout: Modern mobile-first UI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
-screens:
+jobs:
+  build:
+    name: Build and Test StudyFolio
+    runs-on: ubuntu-latest
 
-  onboarding:
-    title: "Welcome to StudyFolio"
-    subtitle: "Your smarter way to study."
-    illustration: "Floating books and AI learning elements"
-    buttons:
-      - "Get Started"
-      - "Sign in with Google"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  dashboard:
-    greeting: "Hello, Student!"
-    subtitle: "What would you like to study today?"
+      - name: Set Up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
-    quick_actions:
-      - name: Upload Materials
-        icon: upload
-      - name: Ask AI Tutor
-        icon: message-circle
-      - name: Create Flashcards
-        icon: layers
-      - name: Generate Quiz
-        icon: clipboard-list
+      - name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-    sections:
-      - title: Continue Learning
-        type: recent_documents
+      - name: Grant Gradle Permission
+        run: chmod +x gradlew
 
-      - title: Your Study Progress
-        type: progress_tracker
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
 
-      - title: Recommended Activities
-        type: ai_recommendations
+      - name: Build Android APK
+        run: ./gradlew assembleDebug
 
-  ai_tutor:
-    title: "AI Study Assistant"
-    features:
-      - Answer questions using uploaded materials
-      - Explain complex concepts
-      - Provide step-by-step solutions
-      - Give real-world examples
-      - Support follow-up questions
-    response_style: Simple and student-friendly
-    source_citations: true
-
-  study_materials:
-    title: "My Learning Library"
-    upload_formats:
-      - PDF
-      - DOCX
-      - PPTX
-      - TXT
-    capabilities:
-      - Automatic summarization
-      - Key point extraction
-      - Topic organization
-      - Document search
-
-  flashcards:
-    title: "Smart Flashcards"
-    features:
-      - AI-generated questions
-      - Interactive flip animation
-      - Shuffle cards
-      - Track memorization
-      - Save favorite cards
-
-  quizzes:
-    title: "Practice Center"
-    question_types:
-      - Multiple Choice
-      - True or False
-      - Identification
-      - Fill in the Blanks
-    features:
-      - Automatic scoring
-      - Answer explanations
-      - Performance tracking
-      - Review incorrect answers
-
-  ai_podcast:
-    title: "Audio Learning"
-    features:
-      - Two AI-generated speakers
-      - Conversational lesson explanations
-      - Audio playback controls
-      - Lesson-based discussions
-      - Playback speed settings
-
-  progress:
-    title: "My Study Progress"
-    metrics:
-      - Total study hours
-      - Completed lessons
-      - Quiz average
-      - Flashcards mastered
-      - Weekly activity
-
-navigation:
-  type: Bottom Navigation
-  items:
-    - Home
-    - Library
-    - Study
-    - Progress
-    - Profile
-
-backend:
-  authentication:
-    provider: Firebase Authentication
-    methods:
-      - Google Sign-In
-      - Email and Password
-
-  database:
-    provider: Firebase Firestore
-    stores:
-      - User Profiles
-      - Uploaded Documents
-      - Flashcards
-      - Quiz Results
-      - Study Progress
-
-  storage:
-    provider: Firebase Storage
-    purpose: Store uploaded study materials
-
-  ai:
-    capabilities:
-      - Document Understanding
-      - Question Answering
-      - Text Summarization
-      - Quiz Generation
-      - Flashcard Generation
-      - Audio Generation
-
-requirements:
-  - Functional buttons and navigation
-  - Responsive mobile interface
-  - Secure user authentication
-  - Persistent user data
-  - Upload and process documents
-  - AI-generated content based on sources
-  - Loading indicators and error handling
-  - Save study history automatically
-  - Clean and accessible interface
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StudyFolio-APK
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
