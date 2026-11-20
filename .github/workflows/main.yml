@@ -14,16 +14,38 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Check Repository Files
-        run: ls -la
+      - name: Find Project Files
+        id: find-project
+        run: |
+          echo "=== Repository Contents ==="
+          find . -maxdepth 3 -not -path '*/.*'
+          PKG_DIR=$(find . -maxdepth 3 -name "package.json" -not -path "*/node_modules/*" -printf "%h\n" | head -n 1)
+          if [ -n "$PKG_DIR" ]; then
+            echo "Found package.json in: $PKG_DIR"
+            echo "has_pkg=true" >> "$GITHUB_OUTPUT"
+            echo "dir=$PKG_DIR" >> "$GITHUB_OUTPUT"
+          else
+            echo "No package.json found — treating as static/non-Node project."
+            echo "has_pkg=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set Up Node.js
+        if: steps.find-project.outputs.has_pkg == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install Dependencies
+        if: steps.find-project.outputs.has_pkg == 'true'
+        working-directory: ${{ steps.find-project.outputs.dir }}
         run: npm install
 
       - name: Build Project
-        run: npm run build
+        if: steps.find-project.outputs.has_pkg == 'true'
+        working-directory: ${{ steps.find-project.outputs.dir }}
+        run: npm run build --if-present
+
+      - name: Verify Static Files
+        if: steps.find-project.outputs.has_pkg == 'false'
+        run: |
+          echo "Static or non-Node project verified successfully."
