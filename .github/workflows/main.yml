@@ -10,10 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: android # Change to '.' if gradlew is at the repo root
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,17 +23,14 @@ jobs:
       - name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Grant Gradle Permission
-        run: chmod +x gradlew
-
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: gradle test
 
       - name: Build Android APK
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: StudyFolio-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk # Adjust if your project folder differs
+          path: app/build/outputs/apk/debug/*.apk
