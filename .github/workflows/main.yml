@@ -1,0 +1,170 @@
+
+project:
+  name: StudyFolio AI
+  version: "2.0"
+  category: Education
+  platform: Android
+  purpose: >
+    An intelligent AI-powered learning platform
+    that helps students study, organize notes,
+    prepare for exams, and understand lessons.
+
+design:
+  theme: Dark Academic
+  primary: "#063B2D"
+  secondary: "#8DE5C2"
+  background: "#071B16"
+  surface: "#103C30"
+  text_primary: "#FFFFFF"
+  text_secondary: "#B7CEC4"
+  accent: "#4BD6A0"
+  font: "Inter"
+  border_radius: 20
+  layout: Modern mobile-first UI
+
+screens:
+
+  onboarding:
+    title: "Welcome to StudyFolio"
+    subtitle: "Your smarter way to study."
+    illustration: "Floating books and AI learning elements"
+    buttons:
+      - "Get Started"
+      - "Sign in with Google"
+
+  dashboard:
+    greeting: "Hello, Student!"
+    subtitle: "What would you like to study today?"
+
+    quick_actions:
+      - name: Upload Materials
+        icon: upload
+      - name: Ask AI Tutor
+        icon: message-circle
+      - name: Create Flashcards
+        icon: layers
+      - name: Generate Quiz
+        icon: clipboard-list
+
+    sections:
+      - title: Continue Learning
+        type: recent_documents
+
+      - title: Your Study Progress
+        type: progress_tracker
+
+      - title: Recommended Activities
+        type: ai_recommendations
+
+  ai_tutor:
+    title: "AI Study Assistant"
+    features:
+      - Answer questions using uploaded materials
+      - Explain complex concepts
+      - Provide step-by-step solutions
+      - Give real-world examples
+      - Support follow-up questions
+    response_style: Simple and student-friendly
+    source_citations: true
+
+  study_materials:
+    title: "My Learning Library"
+    upload_formats:
+      - PDF
+      - DOCX
+      - PPTX
+      - TXT
+    capabilities:
+      - Automatic summarization
+      - Key point extraction
+      - Topic organization
+      - Document search
+
+  flashcards:
+    title: "Smart Flashcards"
+    features:
+      - AI-generated questions
+      - Interactive flip animation
+      - Shuffle cards
+      - Track memorization
+      - Save favorite cards
+
+  quizzes:
+    title: "Practice Center"
+    question_types:
+      - Multiple Choice
+      - True or False
+      - Identification
+      - Fill in the Blanks
+    features:
+      - Automatic scoring
+      - Answer explanations
+      - Performance tracking
+      - Review incorrect answers
+
+  ai_podcast:
+    title: "Audio Learning"
+    features:
+      - Two AI-generated speakers
+      - Conversational lesson explanations
+      - Audio playback controls
+      - Lesson-based discussions
+      - Playback speed settings
+
+  progress:
+    title: "My Study Progress"
+    metrics:
+      - Total study hours
+      - Completed lessons
+      - Quiz average
+      - Flashcards mastered
+      - Weekly activity
+
+navigation:
+  type: Bottom Navigation
+  items:
+    - Home
+    - Library
+    - Study
+    - Progress
+    - Profile
+
+backend:
+  authentication:
+    provider: Firebase Authentication
+    methods:
+      - Google Sign-In
+      - Email and Password
+
+  database:
+    provider: Firebase Firestore
+    stores:
+      - User Profiles
+      - Uploaded Documents
+      - Flashcards
+      - Quiz Results
+      - Study Progress
+
+  storage:
+    provider: Firebase Storage
+    purpose: Store uploaded study materials
+
+  ai:
+    capabilities:
+      - Document Understanding
+      - Question Answering
+      - Text Summarization
+      - Quiz Generation
+      - Flashcard Generation
+      - Audio Generation
+
+requirements:
+  - Functional buttons and navigation
+  - Responsive mobile interface
+  - Secure user authentication
+  - Persistent user data
+  - Upload and process documents
+  - AI-generated content based on sources
+  - Loading indicators and error handling
+  - Save study history automatically
+  - Clean and accessible interface
